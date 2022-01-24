@@ -17,6 +17,13 @@ function PcapParser(file) {
         var fileHeader = pcap.slice(current, lenfileHeader);        // take the fileHeader out
         current += lenfileHeader        // update the current location
         console.log("fileHeader", fileHeader);
+
+
+        // packetRecord
+        const lenpacketRecord = 16      // according to specs, packetRecord is of 16 bytes
+        let packetRecord = pcap.slice(current, current + lenpacketRecord);      // take the packetRecord out
+        current += lenpacketRecord      // update the current location
+        console.log("packetRecord", packetRecord);
     });
 }
 
