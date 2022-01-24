@@ -18,21 +18,25 @@ function PcapParser(file) {
         current += lenfileHeader        // update the current location
         console.log("fileHeader", fileHeader);
 
+        var pkid = 0
+        while (current < pcap.length) {
+            // packetRecord
+            const lenpacketRecord = 16      // according to specs, packetRecord is of 16 bytes
+            let packetRecord = pcap.slice(current, current + lenpacketRecord);      // take the packetRecord out
+            current += lenpacketRecord      // update the current location
+            console.log("packetRecord", pkid, packetRecord);
 
-        // packetRecord
-        const lenpacketRecord = 16      // according to specs, packetRecord is of 16 bytes
-        let packetRecord = pcap.slice(current, current + lenpacketRecord);      // take the packetRecord out
-        current += lenpacketRecord      // update the current location
-        console.log("packetRecord", packetRecord);
+            let cpl = packetRecord.slice(8, 11).reverse().join('')      // extract CPL from packetRecord as a wholw hex
+            cpl = parseInt(cpl, 16)     // convert hex to decimal
+            console.log("Captured Packet Length", pkid, cpl);
 
-        let cpl = packetRecord.slice(8, 11).reverse().join('')      // extract CPL from packetRecord as a wholw hex
-        cpl = parseInt(cpl, 16)     // convert hex to decimal
-        console.log("Captured Packet Length", cpl);
+            const lenpacketData = cpl       // consider packetData lenth to be CPL between CPL and OPL
+            let packetData = pcap.slice(current, current + lenpacketData);      // take the packetData out
+            current += lenpacketData        // update the current location
+            console.log("packetData", pkid, packetData);
 
-        const lenpacketData = cpl       // consider packetData lenth to be CPL between CPL and OPL
-        let packetData = pcap.slice(current, current + lenpacketData);      // take the packetData out
-        current += lenpacketData        // update the current location
-        console.log("packetData", packetData);
+            pkid += 1
+        }
     });
 }
 
