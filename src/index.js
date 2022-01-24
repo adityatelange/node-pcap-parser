@@ -25,7 +25,9 @@ async function PcapParser(file) {
     current += lenfileHeader        // update the current location
     console.log("fileHeader", fileHeader);
 
+    // Packets
     var pkid = 0
+    let packets = []
     while (current < pcap.length) {
         // packetRecord
         const lenpacketRecord = 16      // according to specs, packetRecord is of 16 bytes
@@ -42,8 +44,11 @@ async function PcapParser(file) {
         current += lenpacketData        // update the current location
         console.log("packetData", pkid, packetData);
 
+        packets.push({ packetRecord, packetData })
         pkid += 1
     }
+
+    return { fileHeader, packets }
 }
 
 module.exports.PcapParser = PcapParser
