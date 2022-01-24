@@ -34,7 +34,7 @@ function packetRecordHumanize(packetRecord, packet) {
 }
 
 
-async function PcapParser(file) {
+async function PcapParser(file, humanize) {
     let pcap = await readFile(file);                                            // read file from given location
 
     pcap = pcap.match(/.{1,2}/g)
@@ -45,7 +45,9 @@ async function PcapParser(file) {
     // FileHeader
     const lenfileHeader = 24                                                    // according to specs, fileHeader is of 24 bytes
     var fileHeader = pcap.slice(current, lenfileHeader);                        // take the fileHeader out
-    fileHeader = fileHeaderHumanize(fileHeader)
+    if (humanize === true) {
+        fileHeader = fileHeaderHumanize(fileHeader)
+    }
     current += lenfileHeader                                                    // update the current location
     // console.log("fileHeader", fileHeader);
 
@@ -68,7 +70,11 @@ async function PcapParser(file) {
         current += lenpacketData                                                // update the current location
         // console.log("packetData", pkid, packetData);
 
-        packets.push(packetRecordHumanize(packetRecord, packetData))
+        if (humanize === true) {
+            packets.push(packetRecordHumanize(packetRecord, packetData))
+        } else {
+            packets.push({ packetRecord, packetData })
+        }
         // pkid += 1
     }
 
